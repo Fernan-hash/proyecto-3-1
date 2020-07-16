@@ -44,9 +44,7 @@ def EnviarExcel():
     outSheet.write("A2","Pedidos: ")
     for i in range(len(imprimirlista3)):
         outSheet.write(1,i+1,imprimirlista3[i])
-    CostoFinal=0
-    for i in range(len(CostoTotal)):
-        CostoFinal=CostoTotal[i]+CostoFinal
+    
     IGV=round(CostoFinal*0.18,2)
 
     outSheet.write("A3","OP. GRAVADA: ")
@@ -79,9 +77,7 @@ def EnviarTexto():
     archivo.write(str(Nombres[iterador])+" su pedido es:")
     for i in range(len(imprimirlista2)):
         archivo.write("\n   -"+imprimirlista2[i])
-    CostoFinal=0
-    for i in range(len(CostoTotal)):
-        CostoFinal=CostoTotal[i]+CostoFinal
+   
     IGV=round(CostoFinal*0.18,2)
     
     archivo.write("\nOP. GRAVADA S/ {}\n".format(CostoFinal-IGV))
@@ -144,7 +140,7 @@ def ImprimirPedido(ordenlista):
     b=1
     for i in range(len(Cantidad[iterador2])): 
         lista1=0
-        costoperperson=Pedido[iterador2][i][b]*Cantidad[iterador2][i]
+        costoperperson=int(Pedido[iterador2][i][b])*int(Cantidad[iterador2][i])
         lista1=str("- "+" "+str(Pedido[iterador2][i][a])+" ("+str(Cantidad[iterador2][i])+')'+" S./"+str(costoperperson))
         presentar.append(lista1)
         CostoTotal.append(costoperperson)
@@ -223,6 +219,7 @@ if(opcion==5):
     for i in range(len(imprimirlista)):
         print("    "+imprimirlista[i])
     CostoFinal=0
+    print(CostoTotal)
     for i in range(len(CostoTotal)):
         CostoFinal=CostoTotal[i]+CostoFinal
     IGV=round(CostoFinal*0.18,2)
