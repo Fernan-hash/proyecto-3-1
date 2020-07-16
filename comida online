@@ -1,0 +1,277 @@
+def salir():
+    root.destroy()
+    
+def EnviarCorreo():
+    import smtplib
+    iterador=0
+    
+    imprimirlista2=ImprimirPedido(iterador)
+    mensaje=(str(Nombres[iterador])+" su pedido es:\n")
+    for i in range(len(imprimirlista2)):
+        mensaje=mensaje+str("\n   -"+imprimirlista2[i])
+    CostoFinal=0
+    for i in range(len(CostoTotal)):
+        CostoFinal=CostoTotal[i]+CostoFinal
+    IGV=round(CostoFinal*0.18,2)
+    
+    mensaje = mensaje+str("\nOP. GRAVADA S/"+str(CostoFinal-IGV)+"\n")
+    mensaje=mensaje+str("IGV 18% : S/"+str(IGV)+"\n")
+    mensaje=mensaje+str("Total a pagar: S/."+str(CostoFinal))
+    mensaje=mensaje+str("\nTe llamaremos al número: "+str(Celular[iterador]))
+    mensaje=mensaje+str("\nDireccion: "+str(Direccion[0]))
+    mensaje=mensaje+str("\nCorreo: "+str(Correo[0]))
+    mensaje=mensaje+str("\nPedido realizado, disfrute sus alimentos, gracias por elegirnos!")
+    
+    subject="Pedido de Doña Gula"
+    mensaje='Subject: {}\n\n{}'.format(subject,mensaje)
+    server = smtplib.SMTP('fernando.paucar@utec.edu.pe',587)
+    server.starttls()
+    server.login('fernando.paucar@utec.edu.pe','password')
+    server.sendmail('fernando.paucar@utec.edu.pe',Correo[0],mensaje)
+    server.quit()
+    lCorreo.config(text="Correo enviado")
+
+
+def EnviarExcel():
+    #codigo 
+    import xlsxwriter
+    iterador=0
+    outWorkbook = xlsxwriter.Workbook("PedidoDoniaGula.xlsx")
+    outSheet=outWorkbook.add_worksheet()
+    imprimirlista3=ImprimirPedido(iterador)
+    outSheet.write("A1","Nombre: ")
+    outSheet.write("B1",str(Nombres[iterador]))
+    outSheet.write("A2","Pedidos: ")
+    for i in range(len(imprimirlista3)):
+        outSheet.write(1,i+1,imprimirlista3[i])
+    CostoFinal=0
+    for i in range(len(CostoTotal)):
+        CostoFinal=CostoTotal[i]+CostoFinal
+    IGV=round(CostoFinal*0.18,2)
+
+    outSheet.write("A3","OP. GRAVADA: ")
+    outSheet.write("B3",str("S/."+str(CostoFinal-IGV)))
+    outSheet.write("A4","IGV: ")
+    outSheet.write("B4",str("S/."+str(IGV)))
+    
+    outSheet.write("A5","Total a pagar: ")
+    outSheet.write("B5",str(CostoFinal))
+    
+    
+    outSheet.write("A6","Número: ")
+    outSheet.write("B6",str(Celular[iterador]))
+    
+    outSheet.write("A7","Dirección: ")
+    outSheet.write("B7",str(Direccion[iterador]))
+    
+    outSheet.write("A8","Correo: ")
+    outSheet.write("B8",str(Correo[iterador]))
+        
+    outWorkbook.close()
+    lExcel.config(text="Excel guardado en Disco C/USERS/USUARIO")
+    
+def EnviarTexto():
+    #codigo
+    #abrir un archivo en el modo escritura:
+    iterador=0
+    archivo = open("D:\\Pedido_Donia Gula.txt",mode="w")
+    imprimirlista2=ImprimirPedido(iterador)
+    archivo.write(str(Nombres[iterador])+" su pedido es:")
+    for i in range(len(imprimirlista2)):
+        archivo.write("\n   -"+imprimirlista2[i])
+    CostoFinal=0
+    for i in range(len(CostoTotal)):
+        CostoFinal=CostoTotal[i]+CostoFinal
+    IGV=round(CostoFinal*0.18,2)
+    
+    archivo.write("\nOP. GRAVADA S/ {}\n".format(CostoFinal-IGV))
+    archivo.write("IGV 18% : S/ {}\n".format(IGV))
+    archivo.write("Total a pagar: S/."+str(CostoFinal))
+    archivo.write("\nTe llamaremos al número: "+str(Celular[iterador]))
+    archivo.write("\nDireccion: "+str(Direccion[0]))
+    archivo.write("\nCorreo: "+str(Correo[0]))
+    archivo.write("\nPedido realizado, disfrute sus alimentos, gracias por elegirnos!")
+    
+    archivo.close()    
+    lTexto.config(text="Texto guardado en Disco D")
+    
+def ValidarComida(maximo):
+    try:
+        maxi=maximo
+        OpciondeComida=int(input()) #se ingresa una opcion
+        if(isinstance(OpciondeComida, int) and OpciondeComida>0 and OpciondeComida <=maxi): #valida si es entero y tbien si esta entre la cantidad de opciones opciones 
+            return OpciondeComida
+        else: 
+            return 0 #retorna 0 si no esta en las opciones
+    except ValueError:
+        return 0#retorna 0 si no esta en las opciones
+def ValidarNumero():
+    try:
+        numero=int(input()) #se ingresa una numero
+        if(isinstance(numero, int)): #valida si es entero  
+            return numero
+        else: 
+            return 0 #retorna 0 si no esta en las opciones
+    except ValueError:
+        return 0#retorna 0 si no esta en las opciones
+def PedidoGeneral(Lista):
+    Comida=[]
+    Comida=Lista
+    print("Eliga una opción:")
+    for i in range(len(Comida)):
+        print(str(i+1)+'.'+str(Comida[i][0])+" S/."+str(Comida[i][1]))
+    while(1): #la opcion de comida es la opcion elegida por el usuario
+        opcioncomida=ValidarComida(len(Comida)) #se ingresa el numero 4 porque ese es el numero maximo de opciones para validar
+        if(opcioncomida==0): #si la opcion retorna cero significa que la validacion es erroneea
+            print("Valor incorrecto, no esta en las opciones, vuelva a elegir ")
+        else: #Si nuestra funcion retorna un numero diferente de 0 rompera el bucle
+            PedidoPorPersona.append(Comida[opcioncomida-1])
+            break
+    print("Ingrese una cantidad: ")
+    while(1):
+        cantidadcomida=ValidarComida(30) #se ingresa el numero 4 porque ese es el numero maximo de opciones para validar
+        if(cantidadcomida==0): #si la opcion retorna cero significa que la validacion es erroneea
+            print("Valor incorrecto, no esta en las opciones, vuelva a elegir ")
+        else: #Si nuestra funcion retorna un numero diferente de 0 rompera el bucle
+            CantidadPorPersona.append(cantidadcomida)
+            break  
+    print("Pedido: "+str(cantidadcomida)+' '+str(Comida[opcioncomida-1][0])+" c/u S/."+str(Comida[opcioncomida-1][1]))
+
+def ImprimirPedido(ordenlista):
+    iterador2=ordenlista
+    presentar=[]
+    a=0
+    b=1
+    for i in range(len(Cantidad[iterador2])): 
+        lista1=0
+        costoperperson=Pedido[iterador2][i][b]*Cantidad[iterador2][i]
+        lista1=str("- "+" "+str(Pedido[iterador2][i][a])+" ("+str(Cantidad[iterador2][i])+')'+" S./"+str(costoperperson))
+        presentar.append(lista1)
+        CostoTotal.append(costoperperson)
+        #encajara con la informacion del plato que esta en la lista de Pedido
+        #aumentara 2 para poder encajar con el preciode la lista Pedido 
+    return presentar #retornara una lista ordenada de que cada linea de cantidad de plato plato y costro total
+
+
+Comidas=[["Pollo al horno",17],["Arroz a la cubana",15],["Lasaña",32],["Ensalada de champiñones",16],["Filete",100],["ceviche",18],["Pachamanca",32]]
+Sopas=[["S. Seca ",14],["S. de kion",10],["Minestrone ",19],["Bisque",23],["Caldo verde",25],["Borsh rusa",16],["Caldo de gallina",15]]
+Bebidas=[["pepsi",2.50],["nuka cola",3],["bublesoda",2],["guarana",2],["fernet",22],["vino",53],["cerveza",18]]
+Postres=[["torta de vainilla",7],["torta de chocolate",7],["pie de limon",7],["pionono",7],["tiramisu",7],["Macarons",7],["Flan",7]]
+Pedido=[] #aca se almacenara los pedidos de todas las personas
+Cantidad=[] #listas de cantidades repecto al orden que hizo su pedido cada usuario
+CantidadPorPersona=[]#lista temporal para almacenar la cantidad por persona
+PedidoPorPersona=[] #se almacenara en una lista, lo pedido luego esta lista se pasara como lista a pedido y luego se clenea
+Nombres=[] #aca se almacenaran los nombres
+Correo=[] #Aqui se almacenran los correos
+Direccion=[]
+Celular=[] #Aqui se almacenaran los celulares 
+iterador=0 #con esta variable se guardaran todos losdatos conforme se va 
+CostoTotal=[]
+imprimirlista=0                 
+while(1):
+    print("\nBienvenido contamos con los siguientes opciones: ")
+    print("Ingrese 1 para ver platos de fondo")
+    print("Ingrese 2 para ver sopas")
+    print("Ingrese 3 para ver bebidas")
+    print("Ingrese 4 para ver postres")
+    print("Ingrese 5 para finalizar su pedido")
+    while(1):
+        opcion=ValidarComida(5) ##se ingresa el numero 4 porque ese es el numero maximo de opciones para validar
+        if(opcion==0): #si la opcion retorna cero significa que la validacion es erroneea
+            print("Valor incorrecto, no esta en las opciones, vuelva a elegir ")
+        else: #Si nuestra funcion retorna un numero diferente de 0 rompera el bucle
+            break 
+    if(opcion==1):
+        PedidoGeneral(Comidas)
+        
+    elif(opcion==2):
+        PedidoGeneral(Sopas)
+        
+    elif(opcion==3):
+        PedidoGeneral(Bebidas)
+        
+    elif(opcion==4):
+        PedidoGeneral(Postres)
+    elif(opcion==5):
+        break
+if(opcion==5):
+    nombre=0
+    nombre=input("Ingrese su nombre completo: ")
+    Nombres.append(nombre)
+    correo=0
+    correo=input("Ingrese su correo: ")
+    Correo.append(correo)
+    print("Ingrese un número de celular con su codigo postal  ejm: 051956765463: ")
+    while(1):
+            numero=ValidarNumero() 
+            if(numero==0): #si la opcion retorna cero significa que la validacion es erroneea
+                print("Numero incorrecto, vuelva a ingresar")
+            else: #Si nuestra funcion retorna un numero diferente de 0 rompera el bucle
+                Celular.append(numero)
+                break
+    Cantidad.append(CantidadPorPersona)
+    Pedido.append(PedidoPorPersona)
+    CantidadPorPersona=[]
+    PedidoPorPersona=[]
+    direccion=0
+    direccion=input("Ingrese su dirección de casa: ")
+    Direccion.append(direccion)
+    
+    imprimirlista=ImprimirPedido(iterador)
+    print('')
+    print(str(Nombres[iterador])+" su pedido es:")
+    for i in range(len(imprimirlista)):
+        print("    "+imprimirlista[i])
+    CostoFinal=0
+    for i in range(len(CostoTotal)):
+        CostoFinal=CostoTotal[i]+CostoFinal
+    IGV=round(CostoFinal*0.18,2)
+    
+    print("OP. GRAVADA S/ {}".format(CostoFinal-IGV))
+    print("IGV 18% : S/ {}".format(IGV))
+    print("Total a pagar: S/."+str(CostoFinal))
+    print("Te llamaremos al número: "+str(Celular[iterador]))
+    print("Direccion: "+str(Direccion[iterador]))
+    print("Pedido realizado, disfrute sus alimentos, gracias por elegirnos!")
+    iterador=iterador+1
+    
+    
+    #empezando a mostrar en la pantalla del tkinteer
+    from tkinter import *
+    
+    root = Tk()
+    root.title("Doña Gula")
+    #creamos un frame
+    frame = Frame(root,padx=150,pady=10)
+    frame.grid()
+    
+    #creando un botón (button):
+    bCorreo = Button(frame,text="Enviar Correo",font=("verdana",12),command=EnviarCorreo)
+    bCorreo.grid(row=1,column=0,sticky=W)
+    
+    bTexto = Button(frame,text="Enviar archivo de Texto",font=("verdana",12),
+                    command=EnviarTexto)
+    bTexto.grid(row=2,column=0,sticky=W)
+    
+    bExcel = Button(frame,text="Enviar Excel",font=("verdana",12),
+                    command=EnviarExcel)
+    bExcel.grid(row=3,column=0,sticky=W)
+    
+    
+    
+    lTexto = Label(frame,text="                     ",font=("verdana",12))
+    lTexto.grid(row=2,column=2)
+    
+    lExcel = Label(frame,text="                              ",font=("verdana",12))
+    lExcel.grid(row=3,column=2)
+
+    lCorreo = Label(frame,text="                           ",font=("verdana",12))
+    lCorreo.grid(row=1,column=2)
+    
+    bSalir = Button(frame,text="Salir",font=("verdana",10),command=salir)
+    bSalir.grid(row=6,column=2,sticky=E)
+    
+    lTitulo = Label(frame,text="Doña Gula ",fg="green",font=("verdana",16))
+    lTitulo.grid(row=0,columnspan=2)
+    
+    root.mainloop()
